@@ -34,3 +34,13 @@ This is a starter codebase, not a deployed or fully production-audited service. 
 
 ## Google Sheets sync design
 The database is authoritative. Sheets is a reporting copy. The sync endpoint reads a sold ticket from Supabase and appends it to `Sales Log`. For production, use a transactional outbox table and a scheduled retry worker, and upsert the Master Register by ticket number to avoid duplicate rows.
+
+## Username login and administrator-created volunteers
+
+1. Run `supabase/username-login-migration.sql` in Supabase SQL Editor.
+2. Add `SUPABASE_SERVICE_ROLE_KEY` to the server environment (Vercel project environment variables and local `.env.local`). Never put this key in a `NEXT_PUBLIC_` variable or commit it.
+3. Existing administrator accounts can continue logging in with their existing email and password (the login field accepts either email or username).
+4. From the Administrator Dashboard, create volunteer accounts with a username and password. Volunteers use the username and password; no email inbox or email confirmation is involved.
+5. Redeploy after setting the environment variable.
+
+Username accounts are mapped internally to synthetic addresses ending in `@volunteer.kristanjali.invalid`. This is a login convenience; access is still protected by Supabase Auth, profile status, and the existing database role checks.
